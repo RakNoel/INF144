@@ -1,9 +1,15 @@
+import com.sun.istack.internal.NotNull;
+import com.sun.istack.internal.Nullable;
+
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Class with functions made to represent the Markov model.
- *
+ * <p>
  * Main point of this class is to generate random strings
  * from a textfile with ordered approximations. Hopefully
  * getting humanly readable text/words out.
@@ -22,46 +28,46 @@ public class Markov {
      * @throws Exception
      */
     public static void main(String[] args) throws Exception {
-        String text = new Scanner(new File("res/askeladden.txt")).nextLine().toLowerCase();
+        //String text = new Scanner(new File("res/.txt")).nextLine().toLowerCase();
+        String text = new BufferedReader(new FileReader(new File("res/askeladden.txt"))).lines()
+                .map(x -> x.toLowerCase().replace(".", "").replace(",", ""))
+                .collect(Collectors.joining(" "));
 
-        MarkovModel<String> d0 = getOrder(text, 0);
-        System.out.print("Zeroth order:: ");
-        for (int i = 0; i < 30; i++) {
-            System.out.print(d0.getRandomFreqNode());
+        String[] holder = null;
+        for (int i = 0; i <= 10; i++) {
+            holder = generateFromText(text, holder);
+            System.out.print(i + " degree :: ");
+            System.out.println(Arrays.toString(holder));
         }
-
-        System.out.println();
-        System.out.print("First order:: ");
-        System.out.println(generateFromText(text, 1));
-        System.out.print("Second order:: ");
-        System.out.println(generateFromText(text, 2));
-        System.out.print("Third order:: ");
-        System.out.println(generateFromText(text, 3));
 
 
     }
 
     /**
-     * This id the generation method, which uses a markov-model to
-     * weighted-random generate strings of length 30.
+     * Method to generate strings from the given text using the markov model,
+     * and possibly at another degree if given a non-empty table
      *
-     * @param text  the text from which to model
-     * @param order the order of how large each node should be
-     * @return the generated string
+     * @param text
+     * @param preGen
+     * @return
      */
-    public static String generateFromText(String text, int order) {
-        MarkovModel<String> d0 = getOrder(text, order);
-        StringBuilder bldr = new StringBuilder();
-        Node<String> startnode = d0.getRandomFreqNode();
+    public static String[] generateFromText(@NotNull String text, @Nullable String[] preGen) {
+        if (preGen == null) {
+            preGen = new String[30];
+            MarkovModel<String> d0 = getOrder(text, 0);
+            for (int i = 0; i < preGen.length; i++)
+                preGen[i] = d0.getRandomFreqNode() + "";
 
-        String hold = startnode.toString();
-        for (int i = 0; i < 30; i++) {
-            String x = d0.getNextNode(hold).toString();
-            bldr.append(x);
-            hold = hold.substring(1) + x;
+            return preGen;
+        } else {
+            int order = preGen[0].length();
+            MarkovModel<String> d0 = getOrder(text, order);
+
+            for (int i = 0; i < preGen.length; i++)
+                preGen[i] += d0.getNextNode(preGen[i]);
+
+            return preGen;
         }
-
-        return bldr.toString();
     }
 
     /**
