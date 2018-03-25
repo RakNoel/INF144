@@ -1,6 +1,3 @@
-import com.sun.istack.internal.NotNull;
-import com.sun.istack.internal.Nullable;
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -21,7 +18,7 @@ import java.util.stream.Collectors;
 public class Markov {
 
     /**
-     * Main method only meant to solve the assignement task itself
+     * Main method only meant to solve the assignment task itself
      * and to test output
      *
      * @param args unused
@@ -47,11 +44,11 @@ public class Markov {
      * Method to generate strings from the given text using the markov model,
      * and possibly at another degree if given a non-empty table
      *
-     * @param text
-     * @param preGen
+     * @param text   Text to make model from
+     * @param preGen nullable
      * @return
      */
-    public static String[] generateFromText(@NotNull String text, @Nullable String[] preGen) {
+    public static String[] generateFromText(String text, String[] preGen) {
         if (preGen == null) {
             preGen = new String[30];
             MarkovModel<String> d0 = getOrder(text, 0);
@@ -95,43 +92,43 @@ public class Markov {
 }
 
 /**
- * Node objects to hold directed links to and their
+ * State objects to hold directed links to and their
  * weight to other nodes. Also remembers its total
  * weight and name.
  *
  * @param <T>
  */
-class Node<T> implements Iterable<Node<T>> {
-    private HashMap<Node, Integer> link_weight;
-    private ArrayList<Node<T>> links;
+class State<T> implements Iterable<State<T>> {
+    private HashMap<State, Integer> link_weight;
+    private ArrayList<State<T>> links;
     private int totalWeight;
     private String name;
 
-    public Node(T t) {
+    public State(T t) {
         this.link_weight = new HashMap<>();
         this.name = t.toString();
         this.links = new ArrayList<>();
         this.totalWeight = 0;
     }
 
-    public void editWeight(Node<T> node, int value) {
-        if (!link_weight.containsKey(node))
-            links.add(node);
+    public void editWeight(State<T> state, int value) {
+        if (!link_weight.containsKey(state))
+            links.add(state);
 
         this.totalWeight += value;
-        link_weight.merge(node, value, (x, y) -> x + y);
+        link_weight.merge(state, value, (x, y) -> x + y);
     }
 
     public int getTotalWeight() {
         return this.totalWeight;
     }
 
-    public int getWeight(Node node) {
-        return link_weight.getOrDefault(node, 0);
+    public int getWeight(State state) {
+        return link_weight.getOrDefault(state, 0);
     }
 
     @Override
-    public Iterator<Node<T>> iterator() {
+    public Iterator<State<T>> iterator() {
         return this.links.iterator();
     }
 
@@ -151,7 +148,7 @@ class Node<T> implements Iterable<Node<T>> {
 class MarkovModel<T> implements Iterable<T> {
 
     private ArrayList<T> elems;
-    private HashMap<T, Node<T>> elemToNode;
+    private HashMap<T, State<T>> elemToNode;
     private int totalWeight;
 
     public MarkovModel() {
@@ -164,18 +161,14 @@ class MarkovModel<T> implements Iterable<T> {
         if (!elems.contains(t1))
             elems.add(t1);
         this.totalWeight++;
-        elemToNode.computeIfAbsent(t1, Node::new).editWeight(elemToNode.computeIfAbsent(t2, Node::new), 1);
+        elemToNode.computeIfAbsent(t1, State::new).editWeight(elemToNode.computeIfAbsent(t2, State::new), 1);
     }
 
-    public Node<T> getNode(T t) {
+    public State<T> getNode(T t) {
         return this.elemToNode.get(t);
     }
 
-    public Node<T> getRandomNode() {
-        return this.getNode(this.elems.get(new Random().nextInt(this.elems.size())));
-    }
-
-    public Node<T> getRandomFreqNode() {
+    public State<T> getRandomFreqNode() {
         int indexer = new Random().nextInt(this.totalWeight + 1);
 
         for (T n : this) {
@@ -188,15 +181,15 @@ class MarkovModel<T> implements Iterable<T> {
         return null;
     }
 
-    public Node<T> getNextNode(T element) {
-        Node<T> node = this.getNode(element);
-        int indexer = new Random().nextInt(node.getTotalWeight() + 1);
+    public State<T> getNextNode(T element) {
+        State<T> state = this.getNode(element);
+        int indexer = new Random().nextInt(state.getTotalWeight() + 1);
 
-        for (Node<T> n : node) {
-            if (indexer <= node.getWeight(n))
+        for (State<T> n : state) {
+            if (indexer <= state.getWeight(n))
                 return n;
             else
-                indexer -= node.getWeight(n);
+                indexer -= state.getWeight(n);
         }
         //SHOULD NEVER HAPPEN
         return null;
@@ -214,7 +207,7 @@ class MarkovModel<T> implements Iterable<T> {
         for (T s : this) {
             bldr.append(s);
             bldr.append(" -> ");
-            for (Node s1 : this.getNode(s))
+            for (State s1 : this.getNode(s))
                 bldr.append("(" + s1 + ", " + this.getNode(s).getWeight(s1) + ") ");
 
             bldr.append(System.lineSeparator());

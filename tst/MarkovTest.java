@@ -48,7 +48,7 @@ public class MarkovTest {
 
         for (String n : m1) {
             sumNodes++;
-            for (Node __ : m1.getNode(n))
+            for (State __ : m1.getNode(n))
                 sumEdge++;
         }
 
