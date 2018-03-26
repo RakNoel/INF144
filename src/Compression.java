@@ -17,13 +17,13 @@ public class Compression {
         return Huffman.deCompressText(encodeed);
     }
 
-    public static String CompressLZW(String original) {
+    /*public static String CompressLZW(String original) {
         return null; //TODO: Implement
     }
 
     public static String deCompressLZW(String encoded) {
         return null; //TODO: Implement
-    }
+    }*/
 }
 
 class Huffman {
@@ -66,14 +66,14 @@ class Huffman {
         return treeQueue;
     }
 
-    static SearchNode<String> buildTreeFrom(PriorityQueue<Node<String>> treeQueue) {
+    private static SearchNode<String> buildTreeFrom(PriorityQueue<Node<String>> treeQueue) {
         while (treeQueue.size() > 1) {
             Node<String> left = treeQueue.poll();
             Node<String> right = treeQueue.poll();
             treeQueue.add(new SearchNode<>(left, right, left.getTotalWeight() + right.getTotalWeight()));
         }
 
-        Node x = treeQueue.poll();
+        Node<String> x = treeQueue.poll();
         return (x instanceof SearchNode) ? (SearchNode<String>) x : null;
     }
 
@@ -89,8 +89,8 @@ class Huffman {
             return;
         }
 
-        treeBFS(((SearchNode<String>) searchRoot).getLeft(), path + "1", compresser);
-        treeBFS(((SearchNode<String>) searchRoot).getRight(), path + "0", compresser);
+        treeBFS(searchRoot.getLeft(), path + "1", compresser);
+        treeBFS(searchRoot.getRight(), path + "0", compresser);
     }
 
     static String compressText(String original) {
@@ -113,8 +113,7 @@ class Huffman {
                 searchRoot = (bitstream.charAt(steps++) == '1') ? searchRoot.getLeft() : searchRoot.getRight();
         } while (result == null);
 
-        String[] r = {bitstream.substring(steps), result};
-        return r;
+        return new String[]{bitstream.substring(steps), result};
     }
 
     static String deCompressText(String encoded) {
@@ -135,9 +134,11 @@ class Huffman {
     }
 }
 
+/*
 class LZW {
 
 }
+*/
 
 class SearchNode<T> implements Node<T> {
     private Node<T> left;

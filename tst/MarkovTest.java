@@ -48,7 +48,7 @@ public class MarkovTest {
 
         for (String n : m1) {
             sumNodes++;
-            for (State __ : m1.getNode(n))
+            for (State ignored : m1.getNode(n))
                 sumEdge++;
         }
 
@@ -64,7 +64,7 @@ public class MarkovTest {
      */
     @Test
     public void Order_test() {
-        TestOrders(short_story, 3);
+        TestOrders(short_story, 5);
     }
 
     /**

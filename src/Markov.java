@@ -22,7 +22,7 @@ public class Markov {
      * and to test output
      *
      * @param args unused
-     * @throws Exception
+     * @throws Exception all exceptions cuz i cant be bothered
      */
     public static void main(String[] args) throws Exception {
         //String text = new Scanner(new File("res/.txt")).nextLine().toLowerCase();
@@ -46,9 +46,9 @@ public class Markov {
      *
      * @param text   Text to make model from
      * @param preGen nullable
-     * @return
+     * @return returns a new String[] filled with generated strings
      */
-    public static String[] generateFromText(String text, String[] preGen) {
+    private static String[] generateFromText(String text, String[] preGen) {
         if (preGen == null) {
             preGen = new String[30];
             MarkovModel<String> d0 = getOrder(text, 0);
@@ -151,7 +151,7 @@ class MarkovModel<T> implements Iterable<T> {
     private HashMap<T, State<T>> elemToNode;
     private int totalWeight;
 
-    public MarkovModel() {
+    MarkovModel() {
         this.elems = new ArrayList<>();
         this.elemToNode = new HashMap<>();
         this.totalWeight = 0;
@@ -207,9 +207,13 @@ class MarkovModel<T> implements Iterable<T> {
         for (T s : this) {
             bldr.append(s);
             bldr.append(" -> ");
-            for (State s1 : this.getNode(s))
-                bldr.append("(" + s1 + ", " + this.getNode(s).getWeight(s1) + ") ");
-
+            for (State s1 : this.getNode(s)) {
+                bldr.append(" (");
+                bldr.append(s1);
+                bldr.append(", ");
+                bldr.append(this.getNode(s).getWeight(s1));
+                bldr.append(") ");
+            }
             bldr.append(System.lineSeparator());
         }
 
