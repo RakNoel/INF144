@@ -1,3 +1,5 @@
+package compression;
+
 /**
  * TODO: Describe class
  *

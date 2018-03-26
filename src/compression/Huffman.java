@@ -1,32 +1,19 @@
+package compression;
+
+import markov.Markov;
+import markov.MarkovModel;
+
 import java.util.HashMap;
 import java.util.PriorityQueue;
 
 /**
- * TODO: Describe class
+ * Class with huffman usage methods
  *
  * @author RakNoel
  * @version 1.0
  * @since 20.03.18
  */
-public class Compression {
-    public static String CompressHuffman(String original) {
-        return Huffman.compressText(original);
-    }
-
-    public static String deCompressHuffman(String encodeed) {
-        return Huffman.deCompressText(encodeed);
-    }
-
-    /*public static String CompressLZW(String original) {
-        return null; //TODO: Implement
-    }
-
-    public static String deCompressLZW(String encoded) {
-        return null; //TODO: Implement
-    }*/
-}
-
-class Huffman {
+public class Huffman {
 
     static PriorityQueue<Node<String>> getFrequencyQueue(String text, StringBuilder queueSaver) {
         MarkovModel<String> d0 = Markov.getOrder(text, 0); //Zeroth markov = freq analysis
@@ -93,7 +80,7 @@ class Huffman {
         treeBFS(searchRoot.getRight(), path + "0", compresser);
     }
 
-    static String compressText(String original) {
+    private static String compressText(String original) {
         StringBuilder outputString = new StringBuilder();
         HashMap<String, String> compresser = createCompresser(original, outputString);
 
@@ -116,7 +103,7 @@ class Huffman {
         return new String[]{bitstream.substring(steps), result};
     }
 
-    static String deCompressText(String encoded) {
+    private static String deCompressText(String encoded) {
         StringBuilder outputString = new StringBuilder();
         int devider = encoded.indexOf('\u001C');
         String frequencyTable = encoded.substring(0, devider);
@@ -132,97 +119,12 @@ class Huffman {
 
         return outputString.toString();
     }
-}
 
-/*
-class LZW {
-
-}
-*/
-
-class SearchNode<T> implements Node<T> {
-    private Node<T> left;
-    private Node<T> right;
-    private int value;
-
-    SearchNode(Node<T> left, Node<T> right, int value) {
-        this.left = left;
-        this.right = right;
-        this.value = value;
+    static String CompressHuffman(String original) {
+        return Huffman.compressText(original);
     }
 
-    @Override
-    public String getName() {
-        return null; //Should not have a name!
-    }
-
-    @Override
-    public int getTotalWeight() {
-        return this.value;
-    }
-
-    public Node<T> getLeft() {
-        return left;
-    }
-
-    public void setLeft(Node<T> left) {
-        this.left = left;
-    }
-
-    public Node<T> getRight() {
-        return right;
-    }
-
-    public void setRight(Node<T> right) {
-        this.right = right;
-    }
-
-    @Override
-    public String toString() {
-        return "(" + left + "," + right + ")";
-    }
-
-    @Override
-    public int compareTo(Node<T> tNode) {
-        return Integer.compare(this.value, tNode.getTotalWeight());
-    }
-}
-
-class LeafNode<T> implements Node<T> {
-    private String name;
-    private int value;
-
-    LeafNode(String name, int value) {
-        this.name = name;
-        this.value = value;
-    }
-
-    @Override
-    public String getName() {
-        return this.name;
-    }
-
-    public int getTotalWeight() {
-        return this.value;
-    }
-
-    @Override
-    public String toString() {
-        return "(" + this.name + "," + this.value + ")";
-    }
-
-    @Override
-    public Node<T> getLeft() {
-        return null;
-    }
-
-    @Override
-    public Node<T> getRight() {
-        return null;
-    }
-
-    @Override
-    public int compareTo(Node<T> tNode) {
-        return Integer.compare(this.value, tNode.getTotalWeight());
+    static String deCompressHuffman(String encodeed) {
+        return Huffman.deCompressText(encodeed);
     }
 }
