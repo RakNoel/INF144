@@ -4,6 +4,7 @@ import org.junit.runners.MethodSorters;
 
 import java.util.PriorityQueue;
 
+import static junit.framework.TestCase.assertTrue;
 import static org.junit.Assert.assertEquals;
 
 /**
@@ -14,12 +15,12 @@ import static org.junit.Assert.assertEquals;
  * @since 25.03.18
  */
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
-public class HuffmanTest {
+public class CompressionTest {
 
     private static String original = "abcdefghijklmnopqrstuvwxyzæøå .,-!? aaabbc";
 
     @Test
-    public void PriorityQueue_Output() {
+    public void Huffman_PriorityQueue_Output() {
 
         String freq = Compression.CompressHuffman(original).split("" + '\u001C')[0];
 
@@ -32,14 +33,30 @@ public class HuffmanTest {
     }
 
     @Test
-    public void Compress_decompress_test() {
-
+    public void HuffmanCompress_decompress_test() {
         String compressed = Compression.CompressHuffman(original);
-        System.out.println("Compressed: " + compressed);
-
         String decompressed = Compression.deCompressHuffman(compressed);
-        System.out.println("deCompressed: " + decompressed);
-
         assertEquals("De-compression loss!", original, decompressed);
+    }
+
+    @Test
+    public void HuffmanCompresses() {
+        assertTrue(getCompressedBitSize(Compression.CompressHuffman(original)) < getTHeoreticalBitSize(original));
+    }
+
+    private int getCompressedBitSize(String encodedString) {
+        return encodedString.split("" + '\u001C')[1].length();
+    }
+
+    private int getTHeoreticalBitSize(String originalString) {
+        int bits = 0;
+        for (char ch : originalString.toCharArray()) {
+            if ((int) ch <= 127)
+                bits += 8;
+            else
+                bits += 16;
+        }
+
+        return bits;
     }
 }
