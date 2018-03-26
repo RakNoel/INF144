@@ -11,4 +11,8 @@ public interface Node<T> extends Comparable<Node<T>> {
     int getTotalWeight();
 
     String toString();
+
+    Node<T> getLeft();
+
+    Node<T> getRight();
 }

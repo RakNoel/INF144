@@ -9,22 +9,64 @@ import java.util.PriorityQueue;
  * @since 20.03.18
  */
 public class Compression {
-    public static void main(String[] args) {
+    public static String CompressHuffman(String original) {
+        return Huffman.compressText(original);
+    }
 
+    public static String deCompressHuffman(String encodeed) {
+        return Huffman.deCompressText(encodeed);
+    }
+
+    public static String CompressLZW(String original) {
+        return null; //TODO: Implement
+    }
+
+    public static String deCompressLZW(String encoded) {
+        return null; //TODO: Implement
     }
 }
 
 class Huffman {
 
-    private static PriorityQueue<Node<String>> getFrequencyQueue(String text) {
+    static PriorityQueue<Node<String>> getFrequencyQueue(String text, StringBuilder queueSaver) {
         MarkovModel<String> d0 = Markov.getOrder(text, 0); //Zeroth markov = freq analysis
         PriorityQueue<Node<String>> treeQueue = new PriorityQueue<>();
-        d0.iterator().forEachRemaining(s -> treeQueue.add(new LeafNode<>(s, d0.getNode(s).getWeight(d0.getNode(s)))));
+        d0.iterator().forEachRemaining(s -> {
+            int weight = d0.getNode(s).getWeight(d0.getNode(s));
+            queueSaver.append(weight);
+            queueSaver.append(s);
+            queueSaver.append('\u0000'); //null
+            treeQueue.add(new LeafNode<>(s, weight));
+        });
+
+        queueSaver.append('\u001C'); //FS ~ File-separator
+        return treeQueue;
+    }
+
+    static PriorityQueue<Node<String>> extractFrequencyQueue(String text) {
+        PriorityQueue<Node<String>> treeQueue = new PriorityQueue<>();
+        String[] nodes = text.split("" + '\u0000');
+
+        nodes:
+        for (String s : nodes) {
+            StringBuilder builder = new StringBuilder();
+            char[] ch = s.toCharArray();
+
+            for (int i = 0; i < s.length(); i++)
+                if (Character.isDigit(ch[i])) {
+                    builder.append(ch[i]);
+                } else {
+                    String name = s.substring(i);
+                    int frequency = Integer.parseInt(builder.toString());
+                    treeQueue.add(new LeafNode<>(name, frequency));
+                    continue nodes;
+                }
+        }
 
         return treeQueue;
     }
 
-    private static SearchNode<String> buildTreeFrom(PriorityQueue<Node<String>> treeQueue) {
+    static SearchNode<String> buildTreeFrom(PriorityQueue<Node<String>> treeQueue) {
         while (treeQueue.size() > 1) {
             Node<String> left = treeQueue.poll();
             Node<String> right = treeQueue.poll();
@@ -35,9 +77,9 @@ class Huffman {
         return (x instanceof SearchNode) ? (SearchNode<String>) x : null;
     }
 
-    private static HashMap<String, String> createCompresser(String original) {
+    private static HashMap<String, String> createCompresser(String original, StringBuilder queueSaver) {
         HashMap<String, String> compresser = new HashMap<>();
-        treeBFS(buildTreeFrom(getFrequencyQueue(original)), "", compresser);
+        treeBFS(buildTreeFrom(getFrequencyQueue(original, queueSaver)), "", compresser);
         return compresser;
     }
 
@@ -51,15 +93,45 @@ class Huffman {
         treeBFS(((SearchNode<String>) searchRoot).getRight(), path + "0", compresser);
     }
 
-    public static String compressText(String original) {
-        HashMap<String, String> compresser = createCompresser(original);
-
-        StringBuilder bdr = new StringBuilder();
+    static String compressText(String original) {
+        StringBuilder outputString = new StringBuilder();
+        HashMap<String, String> compresser = createCompresser(original, outputString);
 
         for (char ch : original.toCharArray())
-            bdr.append(compresser.get(ch + ""));
+            outputString.append(compresser.get(ch + ""));
 
-        return buildTreeFrom(getFrequencyQueue(original)).toString() + System.lineSeparator() + bdr.toString();
+        return outputString.toString();
+    }
+
+    private static String[] searchForNode(Node<String> searchRoot, String bitstream) {
+        int steps = 0;
+        String result = null;
+        do {
+            if (searchRoot instanceof LeafNode)
+                result = searchRoot.getName();
+            else
+                searchRoot = (bitstream.charAt(steps++) == '1') ? searchRoot.getLeft() : searchRoot.getRight();
+        } while (result == null);
+
+        String[] r = {bitstream.substring(steps), result};
+        return r;
+    }
+
+    static String deCompressText(String encoded) {
+        StringBuilder outputString = new StringBuilder();
+        int devider = encoded.indexOf('\u001C');
+        String frequencyTable = encoded.substring(0, devider);
+        String bitstream = encoded.substring(devider + 1);
+
+        SearchNode<String> searchRoot = buildTreeFrom(extractFrequencyQueue(frequencyTable));
+
+        do {
+            String[] x = searchForNode(searchRoot, bitstream);
+            outputString.append(x[1]);
+            bitstream = x[0];
+        } while (bitstream.length() > 0);
+
+        return outputString.toString();
     }
 }
 
@@ -72,7 +144,7 @@ class SearchNode<T> implements Node<T> {
     private Node<T> right;
     private int value;
 
-    public SearchNode(Node left, Node right, int value) {
+    SearchNode(Node<T> left, Node<T> right, int value) {
         this.left = left;
         this.right = right;
         this.value = value;
@@ -119,7 +191,7 @@ class LeafNode<T> implements Node<T> {
     private String name;
     private int value;
 
-    public LeafNode(String name, int value) {
+    LeafNode(String name, int value) {
         this.name = name;
         this.value = value;
     }
@@ -135,7 +207,17 @@ class LeafNode<T> implements Node<T> {
 
     @Override
     public String toString() {
-        return "(" + name + ")";
+        return "(" + this.name + "," + this.value + ")";
+    }
+
+    @Override
+    public Node<T> getLeft() {
+        return null;
+    }
+
+    @Override
+    public Node<T> getRight() {
+        return null;
     }
 
     @Override
