@@ -1,8 +1,14 @@
+import org.junit.BeforeClass;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.util.PriorityQueue;
+import java.util.stream.Collectors;
 
 import static junit.framework.TestCase.assertTrue;
 import static org.junit.Assert.assertEquals;
@@ -17,14 +23,23 @@ import static org.junit.Assert.assertEquals;
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class CompressionTest {
 
-    private static String original = "abcdefghijklmnopqrstuvwxyzæøå .,-!? aaabbc";
+    private static String short_story = null;   //Askeladden
+    private static String long_story = null;    //Moby dick
+
+    @BeforeClass
+    public static void onlyonce() throws FileNotFoundException {
+        short_story = new BufferedReader(new FileReader(new File("res/askeladden.txt"))).lines()
+                .collect(Collectors.joining(" "));
+        long_story = new BufferedReader(new FileReader(new File("res/mobydick.txt"))).lines()
+                .collect(Collectors.joining(" "));
+    }
 
     @Test
     public void Huffman_PriorityQueue_Output() {
 
-        String freq = Compression.CompressHuffman(original).split("" + '\u001C')[0];
+        String freq = Compression.CompressHuffman(short_story).split("" + '\u001C')[0];
 
-        PriorityQueue<Node<String>> one = Huffman.getFrequencyQueue(original, new StringBuilder());
+        PriorityQueue<Node<String>> one = Huffman.getFrequencyQueue(short_story, new StringBuilder());
         PriorityQueue<Node<String>> two = Huffman.extractFrequencyQueue(freq);
 
         while (!one.isEmpty() || !two.isEmpty())
@@ -34,14 +49,14 @@ public class CompressionTest {
 
     @Test
     public void HuffmanCompress_decompress_test() {
-        String compressed = Compression.CompressHuffman(original);
+        String compressed = Compression.CompressHuffman(short_story);
         String decompressed = Compression.deCompressHuffman(compressed);
-        assertEquals("De-compression loss!", original, decompressed);
+        assertEquals("De-compression loss!", short_story, decompressed);
     }
 
     @Test
     public void HuffmanCompresses() {
-        assertTrue(getCompressedBitSize(Compression.CompressHuffman(original)) < getTHeoreticalBitSize(original));
+        assertTrue(getCompressedBitSize(Compression.CompressHuffman(long_story)) < getTHeoreticalBitSize(long_story));
     }
 
     private int getCompressedBitSize(String encodedString) {
