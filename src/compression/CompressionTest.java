@@ -16,6 +16,7 @@ import static compression.Huffman.CompressHuffman;
 import static compression.Huffman.deCompressHuffman;
 import static junit.framework.TestCase.assertTrue;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 
 /**
  * TODO: Describe test
@@ -60,13 +61,52 @@ public class CompressionTest {
 
     @Test
     public void HuffmanCompresses() {
-        assertTrue(getCompressedBitSize(CompressHuffman(long_story)) < getTHeoreticalBitSize(long_story));
+        assertTrue("LZW does not actually compresss",
+                getCompressedBitSize(CompressHuffman(long_story)) < getTHeoreticalBitSize(long_story)
+        );
     }
 
+    @Test
+    public void LZW_Compresses() {
+        System.out.println(LZW.compressText(short_story));
+
+        assertTrue("LZW does not actually compresss",
+                getCompressedBitSize(LZW.compressText(short_story)) < getTHeoreticalBitSize(short_story)
+        );
+
+        System.out.println(getCompressedBitSize(LZW.compressText(short_story))); //28924
+    }
+
+    @Test
+    public void LZW_small_Wont_compress() {
+        String s = "thisisthe";
+        System.out.println(LZW.compressText(s));
+
+        assertFalse("LZW does not actually compresss",
+                getCompressedBitSize(LZW.compressText(s)) < getTHeoreticalBitSize(s)
+        );
+
+        System.out.println(getCompressedBitSize(LZW.compressText(s)));
+    }
+
+
+    /**
+     * Calculates the theoretical size of this string is stored propperly as binary
+     * in fileformat UTF-8
+     *
+     * @param encodedString A compressed string with a FS splitter between dictionary and encoded
+     * @return returns the theoretical size of the compressed string
+     */
     private int getCompressedBitSize(String encodedString) {
-        return encodedString.split("" + '\u001C')[1].length();
+        String[] splitted = encodedString.split("" + '\u001C');
+        return getTHeoreticalBitSize(splitted[0]) + splitted[1].length();
     }
 
+    /**
+     * Claculated the theoretical size of a string if stored in UTF-8
+     * @param originalString the string to measure
+     * @return calculated theoretical file-size of string.
+     */
     private int getTHeoreticalBitSize(String originalString) {
         int bits = 0;
         for (char ch : originalString.toCharArray()) {
