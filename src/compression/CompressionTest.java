@@ -12,8 +12,6 @@ import java.io.FileReader;
 import java.util.PriorityQueue;
 import java.util.stream.Collectors;
 
-import static compression.Huffman.CompressHuffman;
-import static compression.Huffman.deCompressHuffman;
 import static junit.framework.TestCase.assertTrue;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -42,7 +40,7 @@ public class CompressionTest {
     @Test
     public void Huffman_PriorityQueue_Output() {
 
-        String freq = CompressHuffman(short_story).split("" + '\u001C')[0];
+        String freq = Huffman.CompressText(short_story).split("" + '\u001C')[0];
 
         PriorityQueue<Node<String>> one = Huffman.getFrequencyQueue(short_story, new StringBuilder());
         PriorityQueue<Node<String>> two = Huffman.extractFrequencyQueue(freq);
@@ -54,15 +52,15 @@ public class CompressionTest {
 
     @Test
     public void HuffmanCompress_decompress_test() {
-        String compressed = CompressHuffman(short_story);
-        String decompressed = deCompressHuffman(compressed);
+        String compressed = Huffman.CompressText(short_story);
+        String decompressed = Huffman.deCompressText(compressed);
         assertEquals("De-compression loss!", short_story, decompressed);
     }
 
     @Test
     public void HuffmanCompresses() {
         assertTrue("LZW does not actually compresss",
-                getCompressedBitSize(CompressHuffman(long_story)) < getTHeoreticalBitSize(long_story)
+                getCompressedBitSize(Huffman.CompressText(long_story)) < getTHeoreticalBitSize(long_story)
         );
     }
 
@@ -75,6 +73,14 @@ public class CompressionTest {
         );
 
         System.out.println(getCompressedBitSize(LZW.compressText(short_story))); //28924
+    }
+
+    @Test
+    public void LZW_Compress_decompress() {
+        String s = "thisisthe";
+        System.out.println(s);
+
+        System.out.println();
     }
 
     @Test

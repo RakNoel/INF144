@@ -103,7 +103,7 @@ public class Huffman {
         return new String[]{bitstream.substring(steps), result};
     }
 
-    private static String deCompressText(String encoded) {
+    static String deCompressText(String encoded) {
         StringBuilder outputString = new StringBuilder();
         int devider = encoded.indexOf('\u001C');
         String frequencyTable = encoded.substring(0, devider);
@@ -120,11 +120,8 @@ public class Huffman {
         return outputString.toString();
     }
 
-    static String CompressHuffman(String original) {
+    static String CompressText(String original) {
         return Huffman.compressText(original);
     }
 
-    static String deCompressHuffman(String encodeed) {
-        return Huffman.deCompressText(encodeed);
-    }
 }
