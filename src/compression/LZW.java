@@ -50,6 +50,17 @@ public class LZW {
         String dictionaryPart = devidedString[0];
         String encodedPart = devidedString[1];
 
+        LZWDictionary dictionary = createDictionary(dictionaryPart);
+
+        while (encodedPart.length() > 0) {
+            int workingLength = dictionary.getIndexBinary(); //How many bits to read
+            StringBuilder bitreader = new StringBuilder();
+            int selector = 0;
+            while (selector <= workingLength)
+                bitreader.append(encodedPart.charAt(selector++));
+
+
+        }
 
         return output.toString();
     }
@@ -64,7 +75,7 @@ public class LZW {
         return bldr.append(s).toString();
     }
 
-    private static LZWDictionary createDictionary(String original) {
+    static LZWDictionary createDictionary(String original) {
         LZWDictionary dictionary = new LZWDictionary();
         MarkovModel<String> d0 = Markov.getOrder(original, 0);
 
@@ -114,5 +125,19 @@ class LZWDictionary implements Iterable<String> {
     @Override
     public Iterator<String> iterator() {
         return this.rectionary.iterator();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof LZWDictionary))
+            return false;
+
+        LZWDictionary other = (LZWDictionary) o;
+
+        for (String s : this.rectionary)
+            if (other.get(s) == -1)
+                return false;
+
+        return (this.getIndex() == other.getIndex());
     }
 }

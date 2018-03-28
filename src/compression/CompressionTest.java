@@ -88,6 +88,18 @@ public class CompressionTest {
     }
 
     @Test
+    public void LZW_Dictionary_equals() {
+        StringBuilder output = new StringBuilder();
+        String[] devidedString = short_story.split("" + '\u001C');
+        String dictionaryPart = devidedString[0];
+
+        LZWDictionary dictionaryFromCompressed = LZW.createDictionary(dictionaryPart);
+        LZWDictionary dictionaryFromOriginal = LZW.createDictionary(short_story);
+
+        assertTrue("Dictionaries unequal", dictionaryFromCompressed.equals(dictionaryFromOriginal));
+    }
+
+    @Test
     public void LZW_small_Wont_compress() {
         String s = "thisisthe";
         System.out.println(LZW.compressText(s));
