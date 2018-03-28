@@ -22,9 +22,6 @@ public class LZW {
         String previous = "";
         StringBuilder output = new StringBuilder();
 
-        output.append(dictionary.getMax());
-        output.append('\u0000');
-
         for (String s : dictionary)
             output.append(s); //SHOULD ONLY BE OF LENGTH ONE
 
@@ -48,7 +45,13 @@ public class LZW {
     }
 
     public static String deCompressText(String encoded) {
-        return null; //TODO:
+        StringBuilder output = new StringBuilder();
+        String[] devidedString = encoded.split("" + '\u001C');
+        String dictionaryPart = devidedString[0];
+        String encodedPart = devidedString[1];
+
+
+        return output.toString();
     }
 
     private static String toBinaryString(int decimal, int size) {
@@ -68,8 +71,6 @@ public class LZW {
         for (String s : d0)
             dictionary.put(s);
 
-        dictionary.lock();
-
         return dictionary;
     }
 }
@@ -78,15 +79,11 @@ class LZWDictionary implements Iterable<String> {
     private HashMap<String, Integer> dictionary;
     private ArrayList<String> rectionary;
     private int index;
-    private int max;
-    private boolean locked;
 
     LZWDictionary() {
         this.dictionary = new HashMap<>();
         this.rectionary = new ArrayList<>();
         this.index = 0;
-        this.max = 0;
-        this.locked = false;
     }
 
     boolean put(String s) {
@@ -110,15 +107,8 @@ class LZWDictionary implements Iterable<String> {
         return dictionary.getOrDefault(key, -1);
     }
 
-    int getMax() {
-        return this.max;
-    }
-
-    void lock() {
-        if (locked)
-            return;
-        this.locked = true;
-        this.max = this.index - 1;
+    String get(int key) {
+        return rectionary.get(key);
     }
 
     @Override

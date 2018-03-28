@@ -77,10 +77,14 @@ public class CompressionTest {
 
     @Test
     public void LZW_Compress_decompress() {
-        String s = "thisisthe";
-        System.out.println(s);
+        String original = "thisisthe";
+        System.out.println(original);
+        String compressed = LZW.compressText(original); //should be equal to: "4 thise0000010100011011101010100"
+        System.out.println(compressed);
+        String decompressed = LZW.deCompressText(compressed); //Should be equal to: "thisisthe"
+        System.out.println(decompressed);
 
-        System.out.println();
+        assertEquals("LZW decompresses new result!", decompressed, original);
     }
 
     @Test
