@@ -80,7 +80,7 @@ public class Huffman {
         treeBFS(searchRoot.getRight(), path + "0", compresser);
     }
 
-    private static String compressText(String original) {
+    public static String compressText(String original) {
         StringBuilder outputString = new StringBuilder();
         HashMap<String, String> compresser = createCompresser(original, outputString);
 
@@ -118,10 +118,6 @@ public class Huffman {
         } while (bitstream.length() > 0);
 
         return outputString.toString();
-    }
-
-    static String CompressText(String original) {
-        return Huffman.compressText(original);
     }
 
 }

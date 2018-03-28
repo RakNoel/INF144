@@ -12,11 +12,14 @@ import java.io.FileReader;
 import java.util.PriorityQueue;
 import java.util.stream.Collectors;
 
+import static compression.getBitSize.getCompressedBitSize;
+import static compression.getBitSize.getTHeoreticalBitSize;
 import static junit.framework.TestCase.assertTrue;
 import static org.junit.Assert.assertEquals;
 
 /**
- * TODO: Describe test
+ * TEst-Class to see if the compression stuctures work as
+ * expected and that they actually compress.
  *
  * @author RakNoel
  * @version 1.0
@@ -41,7 +44,7 @@ public class CompressionTest {
     @Test
     public void Huffman_PriorityQueue_Output() {
 
-        String freq = Huffman.CompressText(short_story).split("" + '\u001C')[0];
+        String freq = Huffman.compressText(short_story).split("" + '\u001C')[0];
 
         PriorityQueue<Node<String>> one = Huffman.getFrequencyQueue(short_story, new StringBuilder());
         PriorityQueue<Node<String>> two = Huffman.extractFrequencyQueue(freq);
@@ -53,7 +56,7 @@ public class CompressionTest {
 
     @Test
     public void HuffmanCompress_decompress_test() {
-        String compressed = Huffman.CompressText(short_story);
+        String compressed = Huffman.compressText(short_story);
         String decompressed = Huffman.deCompressText(compressed);
         assertEquals("De-compression loss!", short_story, decompressed);
     }
@@ -61,7 +64,7 @@ public class CompressionTest {
     @Test
     public void HuffmanCompresses() {
         assertTrue("LZW does not actually compresss",
-                getCompressedBitSize(Huffman.CompressText(long_story)) < getTHeoreticalBitSize(long_story)
+                getCompressedBitSize(Huffman.compressText(long_story)) < getTHeoreticalBitSize(long_story)
         );
     }
 
@@ -72,8 +75,6 @@ public class CompressionTest {
         assertTrue("LZW does not actually compresss",
                 getCompressedBitSize(LZW.compressText(short_story)) < getTHeoreticalBitSize(short_story)
         );
-
-        System.out.println(getCompressedBitSize(LZW.compressText(short_story))); //28912
     }
 
     @Test
@@ -93,36 +94,5 @@ public class CompressionTest {
         LZWDictionary dictionaryFromOriginal = LZW.createDictionary(short_story);
 
         assertEquals("Dictionaries unequal", dictionaryFromCompressed, dictionaryFromOriginal);
-    }
-
-
-    /**
-     * Calculates the theoretical size of this string is stored propperly as binary
-     * in fileformat UTF-8
-     *
-     * @param encodedString A compressed string with a FS splitter between dictionary and encoded
-     * @return returns the theoretical size of the compressed string
-     */
-    private int getCompressedBitSize(String encodedString) {
-        String[] splitted = encodedString.split("" + '\u001C');
-        return getTHeoreticalBitSize(splitted[0]) + splitted[1].length();
-    }
-
-    /**
-     * Claculated the theoretical size of a string if stored in UTF-8
-     *
-     * @param originalString the string to measure
-     * @return calculated theoretical file-size of string.
-     */
-    private int getTHeoreticalBitSize(String originalString) {
-        int bits = 0;
-        for (char ch : originalString.toCharArray()) {
-            if ((int) ch <= 127)
-                bits += 8;
-            else
-                bits += 16;
-        }
-
-        return bits;
     }
 }
