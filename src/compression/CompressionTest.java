@@ -14,7 +14,6 @@ import java.util.stream.Collectors;
 
 import static junit.framework.TestCase.assertTrue;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 
 /**
  * TODO: Describe test
@@ -32,8 +31,10 @@ public class CompressionTest {
     @BeforeClass
     public static void onlyonce() throws FileNotFoundException {
         short_story = new BufferedReader(new FileReader(new File("res/askeladden.txt"))).lines()
+                .filter(x -> (x.length() > 1))
                 .collect(Collectors.joining(" "));
         long_story = new BufferedReader(new FileReader(new File("res/mobydick.txt"))).lines()
+                .filter(x -> (x.length() > 0))
                 .collect(Collectors.joining(" "));
     }
 
@@ -72,43 +73,26 @@ public class CompressionTest {
                 getCompressedBitSize(LZW.compressText(short_story)) < getTHeoreticalBitSize(short_story)
         );
 
-        System.out.println(getCompressedBitSize(LZW.compressText(short_story))); //28924
+        System.out.println(getCompressedBitSize(LZW.compressText(short_story))); //28912
     }
 
     @Test
     public void LZW_Compress_decompress() {
-        String original = "thisisthe";
-        System.out.println(original);
-        String compressed = LZW.compressText(original); //should be equal to: "4 thise0000010100011011101010100"
-        System.out.println(compressed);
+        String compressed = LZW.compressText(short_story); //should be equal to: "4 thise0000010100011011101010100"
         String decompressed = LZW.deCompressText(compressed); //Should be equal to: "thisisthe"
-        System.out.println(decompressed);
 
-        assertEquals("LZW decompresses new result!", decompressed, original);
+        assertEquals("LZW decompresses new result!", decompressed, short_story);
     }
 
     @Test
     public void LZW_Dictionary_equals() {
-        StringBuilder output = new StringBuilder();
         String[] devidedString = short_story.split("" + '\u001C');
         String dictionaryPart = devidedString[0];
 
         LZWDictionary dictionaryFromCompressed = LZW.createDictionary(dictionaryPart);
         LZWDictionary dictionaryFromOriginal = LZW.createDictionary(short_story);
 
-        assertTrue("Dictionaries unequal", dictionaryFromCompressed.equals(dictionaryFromOriginal));
-    }
-
-    @Test
-    public void LZW_small_Wont_compress() {
-        String s = "thisisthe";
-        System.out.println(LZW.compressText(s));
-
-        assertFalse("LZW does not actually compresss",
-                getCompressedBitSize(LZW.compressText(s)) < getTHeoreticalBitSize(s)
-        );
-
-        System.out.println(getCompressedBitSize(LZW.compressText(s)));
+        assertEquals("Dictionaries unequal", dictionaryFromCompressed, dictionaryFromOriginal);
     }
 
 
@@ -126,6 +110,7 @@ public class CompressionTest {
 
     /**
      * Claculated the theoretical size of a string if stored in UTF-8
+     *
      * @param originalString the string to measure
      * @return calculated theoretical file-size of string.
      */

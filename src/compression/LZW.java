@@ -53,26 +53,37 @@ public class LZW {
         LZWDictionary dictionary = createDictionary(dictionaryPart);
 
         String working = "";
-        String previous = "";
         while (encodedPart.length() > 0) {
-            int workingLength = dictionary.getIndexBinary(); //How many bits to read
+            int workingLength = dictionary.getNextIndexBinary(); //How many bits to read
             StringBuilder bitreader = new StringBuilder();
             int selector = 0;
-            while (selector < workingLength)
+
+            //Read inn bits
+            while (selector < workingLength && selector < encodedPart.length())
                 bitreader.append(encodedPart.charAt(selector++));
 
             encodedPart = encodedPart.substring(selector);
 
+            //Cast binary to integer
             int readNumber = Integer.parseInt(new BigInteger(bitreader.toString(), 2).toString());
-            if (dictionary.get(readNumber) == null) {
 
+            String getter = dictionary.get(readNumber);
 
-            } else {
-                output.append(previous);
-                working += dictionary.get(readNumber);
-                dictionary.put(previous + working.charAt(0));
-                previous = working;
+            if (encodedPart.length() == 0) {
+                output.append(working);
+                output.append(getter);
+                break;
             }
+
+            if (dictionary.put(working + getter.charAt(0))) {
+                output.append(working);
+                System.out.print(working);
+                working = getter;
+            } else {
+                working += getter;
+            }
+
+
         }
 
         return output.toString();
@@ -127,14 +138,15 @@ class LZWDictionary implements Iterable<String> {
         return new BigInteger("" + (this.index - 1)).toString(2).length();
     }
 
+    int getNextIndexBinary() {
+        return new BigInteger("" + (this.index + 1)).toString(2).length();
+    }
+
     int get(String key) {
         return dictionary.getOrDefault(key, -1);
     }
 
     String get(int key) {
-        if (key >= this.rectionary.size())
-            return null;
-
         return rectionary.get(key);
     }
 
