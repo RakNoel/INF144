@@ -52,14 +52,27 @@ public class LZW {
 
         LZWDictionary dictionary = createDictionary(dictionaryPart);
 
+        String working = "";
+        String previous = "";
         while (encodedPart.length() > 0) {
             int workingLength = dictionary.getIndexBinary(); //How many bits to read
             StringBuilder bitreader = new StringBuilder();
             int selector = 0;
-            while (selector <= workingLength)
+            while (selector < workingLength)
                 bitreader.append(encodedPart.charAt(selector++));
 
+            encodedPart = encodedPart.substring(selector);
 
+            int readNumber = Integer.parseInt(new BigInteger(bitreader.toString(), 2).toString());
+            if (dictionary.get(readNumber) == null) {
+
+
+            } else {
+                output.append(previous);
+                working += dictionary.get(readNumber);
+                dictionary.put(previous + working.charAt(0));
+                previous = working;
+            }
         }
 
         return output.toString();
@@ -119,6 +132,9 @@ class LZWDictionary implements Iterable<String> {
     }
 
     String get(int key) {
+        if (key >= this.rectionary.size())
+            return null;
+
         return rectionary.get(key);
     }
 
