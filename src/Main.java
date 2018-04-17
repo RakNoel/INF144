@@ -22,21 +22,29 @@ public class Main {
 
     public static void main(String[] args) throws Exception {
 
-        final int generations = 3;
-        final int iterations = 500;
+        final int generations = 5;
+        final int iterations = 300; //samples to be run
 
         /*
          * First we generate the 30 strings from the markov chain. And inspect them
          */
-        String text = new BufferedReader(new FileReader(new File("res/askeladden.txt"))).lines()
-                .map(x -> x.toLowerCase().replace(".", "").replace(",", ""))
+        String text = new BufferedReader(new FileReader(new File("res/mobydick.txt"))).lines()
+                .map(x -> x.toLowerCase()
+                        .replace(".", "")
+                        .replace(",", "")
+                        .replace("/n", " ")
+                        .replace("(", " ")
+                        .replace(")", " ")
+                        .replace(";", "")
+                        .replace(":", "")
+                )
                 .collect(Collectors.joining(" "));
 
         /*
-         * Generate long stories
+         * Generate short stories (length 30), swap boolean to stop random ending last words.
          */
         for (int i = 1; i <= generations; i++)
-            System.out.printf("%d degree :: %s %n", i, Markov.generateRandomStoryFromText(text, i, 1000, true));
+            System.out.printf("%d degree :: %s %n", i, Markov.generateRandomStoryFromText(text, i, 30, false));
 
         System.out.println("");
 
