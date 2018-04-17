@@ -13,7 +13,7 @@ import java.util.PriorityQueue;
 import java.util.stream.Collectors;
 
 import static compression.getBitSize.getCompressedBitSize;
-import static compression.getBitSize.getTHeoreticalBitSize;
+import static compression.getBitSize.getTheoreticalBitSize;
 import static junit.framework.TestCase.assertTrue;
 import static org.junit.Assert.assertEquals;
 
@@ -64,7 +64,7 @@ public class CompressionTest {
     @Test
     public void HuffmanCompresses() {
         assertTrue("LZW does not actually compresss",
-                getCompressedBitSize(Huffman.compressText(long_story)) < getTHeoreticalBitSize(long_story)
+                getCompressedBitSize(Huffman.compressText(long_story)) < getTheoreticalBitSize(long_story)
         );
     }
 
@@ -73,14 +73,19 @@ public class CompressionTest {
         System.out.println(LZW.compressText(short_story));
 
         assertTrue("LZW does not actually compresss",
-                getCompressedBitSize(LZW.compressText(short_story)) < getTHeoreticalBitSize(short_story)
+                LZW.compressText(short_story).length() < getTheoreticalBitSize(short_story)
         );
     }
 
     @Test
     public void LZW_Compress_decompress() {
-        String compressed = LZW.compressText(short_story); //should be equal to: "4 thise0000010100011011101010100"
+        String compressed = LZW.compressText("thisisthe"); //should be equal to: "0000010100011011101010100"
         String decompressed = LZW.deCompressText(compressed); //Should be equal to: "thisisthe"
+
+        assertEquals("LZW decompresses new result!", decompressed, "thisisthe");
+
+        compressed = LZW.compressText(short_story); //should be equal to: "0000010100011011101010100"
+        decompressed = LZW.deCompressText(compressed); //Should be equal to: "thisisthe"
 
         assertEquals("LZW decompresses new result!", decompressed, short_story);
     }

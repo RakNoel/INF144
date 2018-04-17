@@ -16,16 +16,28 @@ import java.util.Iterator;
  * @since 27.03.18
  */
 public class LZW {
+
+    private static String getStandardDictionary() {
+        StringBuilder bldr = new StringBuilder();
+
+        for (int i = 32; i < 127; i++)
+            bldr.append((char) i);
+
+        bldr.append('æ');
+        bldr.append('ø');
+        bldr.append('å');
+        bldr.append('Æ');
+        bldr.append('Ø');
+        bldr.append('Å');
+
+        return bldr.toString();
+    }
+
     public static String compressText(String original) {
-        LZWDictionary dictionary = createDictionary(original);
+        LZWDictionary dictionary = createDictionary(getStandardDictionary());
         String holder = "";
         String previous = "";
         StringBuilder output = new StringBuilder();
-
-        for (String s : dictionary)
-            output.append(s); //SHOULD ONLY BE OF LENGTH ONE
-
-        output.append('\u001C'); //FILE SPLITTER
 
         for (int i = 0; i < original.length(); i++) {
             holder += original.charAt(i);
@@ -46,11 +58,9 @@ public class LZW {
 
     public static String deCompressText(String encoded) {
         StringBuilder output = new StringBuilder();
-        String[] devidedString = encoded.split("" + '\u001C');
-        String dictionaryPart = devidedString[0];
-        String encodedPart = devidedString[1];
+        String encodedPart = encoded;
 
-        LZWDictionary dictionary = createDictionary(dictionaryPart);
+        LZWDictionary dictionary = createDictionary(getStandardDictionary());
 
         String working = "";
         while (encodedPart.length() > 0) {

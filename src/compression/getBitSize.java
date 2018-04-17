@@ -16,8 +16,12 @@ public class getBitSize {
      * @return returns the theoretical size of the compressed string
      */
     public static int getCompressedBitSize(String encodedString) {
-        String[] splitted = encodedString.split("" + '\u001C');
-        return getTHeoreticalBitSize(splitted[0]) + splitted[1].length();
+
+        if (encodedString.contains("" + '\u001C')) {
+            String[] splitted = encodedString.split("" + '\u001C');
+            return getTheoreticalBitSize(splitted[0]) + splitted[1].length();
+        }
+        return encodedString.length();
     }
 
     /**
@@ -26,7 +30,7 @@ public class getBitSize {
      * @param originalString the string to measure
      * @return calculated theoretical file-size of string.
      */
-    public static int getTHeoreticalBitSize(String originalString) {
+    public static int getTheoreticalBitSize(String originalString) {
         int bits = 0;
         for (char ch : originalString.toCharArray()) {
             if ((int) ch <= 127)
@@ -40,7 +44,7 @@ public class getBitSize {
 
     public static String getCompressionRate(String original, String compressed) {
         double comp = getCompressedBitSize(compressed);
-        double normal = getTHeoreticalBitSize(original);
+        double normal = getTheoreticalBitSize(original);
 
         StringBuilder bldr = new StringBuilder();
 

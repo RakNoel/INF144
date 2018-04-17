@@ -6,7 +6,6 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.stream.Collectors;
 
 import static compression.getBitSize.*;
@@ -23,6 +22,9 @@ public class Main {
 
     public static void main(String[] args) throws Exception {
 
+        final int generations = 3;
+        final int iterations = 500;
+
         /*
          * First we generate the 30 strings from the markov chain. And inspect them
          */
@@ -30,12 +32,13 @@ public class Main {
                 .map(x -> x.toLowerCase().replace(".", "").replace(",", ""))
                 .collect(Collectors.joining(" "));
 
-        String[] holder = null;
-        for (int i = 0; i <= 3; i++) {
-            holder = Markov.generateFromText(text, holder);
-            System.out.print(i + " degree :: ");
-            System.out.println(Arrays.toString(holder));
-        }
+        /*
+         * Generate long stories
+         */
+        for (int i = 1; i <= generations; i++)
+            System.out.printf("%d degree :: %s %n", i, Markov.generateRandomStoryFromText(text, i, 1000, true));
+
+        System.out.println("");
 
 
         /*
@@ -52,41 +55,41 @@ public class Main {
         /*
          * Now lets do this 100 times more to prove how stupid it actually is.
          */
+        int percent = 0;
         ArrayList<String> texter = new ArrayList<>();
-        for (int i = 0; i < 100; i++) {
-            StringBuilder x = new StringBuilder();
-            holder = null;
-            while (x.length() < text.length()) {
-                holder = Markov.generateFromText(text, holder);
-                x.append(Arrays.toString(holder));
-            }
-            texter.add(x.toString());
-            System.out.println(x);
+        for (int i = 0; i < iterations; i++) {
+            String x = Markov.generateRandomStoryFromText(text, generations, 10000, false);
+            texter.add(x);
+
+            if (i % (iterations / 10) == 0)
+                System.out.println((percent += 10) + "%");
         }
+
+        System.out.println("");
 
 
         double sum = 0.0;
         for (String s : texter) {
             double comp = getCompressedBitSize(LZW.compressText(s));
-            double normal = getTHeoreticalBitSize(s);
+            double normal = getTheoreticalBitSize(s);
             sum += 100 * (comp / normal);
         }
-        System.out.println("LZW avg: " + sum / 100);
+        System.out.println("LZW avg: " + sum / iterations);
 
         sum = 0.0;
         for (String s : texter) {
             double comp = getCompressedBitSize(Huffman.compressText(s));
-            double normal = getTHeoreticalBitSize(s);
+            double normal = getTheoreticalBitSize(s);
             sum += 100 * (comp / normal);
         }
-        System.out.println("Huffman avg: " + sum / 100);
+        System.out.println("Huffman avg: " + sum / iterations);
 
         sum = 0.0;
         for (String s : texter) {
             double comp = getCompressedBitSize(Huffman.compressText(LZW.compressText(s).replace('\u001C', ' ')));
-            double normal = getTHeoreticalBitSize(s);
+            double normal = getTheoreticalBitSize(s);
             sum += 100 * (comp / normal);
         }
-        System.out.println("LZW + Huffman avg: " + sum / 100);
+        System.out.println("LZW + Huffman avg: " + sum / iterations);
     }
 }
