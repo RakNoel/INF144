@@ -58,8 +58,12 @@ public class Markov {
         result.append(d1.getRandomFreqNode());
 
         do {
-            gen = result.substring(result.length() - order);
-            result.append(d1.getNextNode(gen));
+            if (order > 0) {
+                gen = result.substring(result.length() - order);
+                result.append(d1.getNextNode(gen));
+            } else {
+                result.append(d1.getRandomFreqNode());
+            }
         } while (result.length() <= length);
 
         if (endAtSpace)

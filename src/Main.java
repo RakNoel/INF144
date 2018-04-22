@@ -43,7 +43,7 @@ public class Main {
         /*
          * Generate short stories (length 30), swap boolean to stop random ending last words.
          */
-        for (int i = 1; i <= generations; i++)
+        for (int i = 0; i <= generations; i++)
             System.out.printf("%d degree :: %s %n", i, Markov.generateRandomStoryFromText(text, i, 50, false));
 
         System.out.println("");
