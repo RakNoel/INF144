@@ -49,6 +49,7 @@ public class MarkovModel<T> implements Iterable<T> {
     }
 
     public State<T> getNextNode(T element) {
+
         State<T> state = this.getNode(element);
         int indexer = new Random().nextInt(state.getTotalWeight() + 1);
 
@@ -58,8 +59,9 @@ public class MarkovModel<T> implements Iterable<T> {
             else
                 indexer -= state.getWeight(n);
         }
-        //SHOULD NEVER HAPPEN
-        return null;
+
+        //If end of line return random node
+        return getRandomFreqNode();
     }
 
     @Override
