@@ -1,5 +1,13 @@
+#IntelliJ
 .idea/
-.class
+*.iml
+
+#Java
+*.class
+*.jar
+
+#Maven
+target/
 
 #Files that are way to large and/or copyrighted
 **/Folktale.txt
