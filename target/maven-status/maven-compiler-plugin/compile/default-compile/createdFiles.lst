@@ -1,0 +1,11 @@
+markov\MarkovModel.class
+compression\LeafNode.class
+compression\getBitSize.class
+markov\Markov.class
+compression\Node.class
+markov\State.class
+compression\LZWDictionary.class
+CompressionMain.class
+compression\LZW.class
+compression\Huffman.class
+compression\SearchNode.class

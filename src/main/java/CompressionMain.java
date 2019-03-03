@@ -11,14 +11,14 @@ import java.util.stream.Collectors;
 import static compression.getBitSize.*;
 
 /**
- * Main class to be run, generating all results
+ * CompressionMain class to be run, generating all results
  * for the assignment.
  *
  * @author RakNoel
  * @version 1.0
  * @since 27.03.18
  */
-public class Main {
+public class CompressionMain {
 
     public static void main(String[] args) throws Exception {
 

@@ -1,2 +1,6 @@
 .idea/
 .class
+
+#Files that are way to large and/or copyrighted
+**/Folktale.txt
+**/mobydick.txt

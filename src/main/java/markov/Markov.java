@@ -3,13 +3,13 @@ package markov;
 /**
  * Class with functions made to represent the markov.Markov model.
  * <p>
- * Main point of this class is to generate random strings
+ * CompressionMain point of this class is to generate random strings
  * from a textfile with ordered approximations. Hopefully
  * getting humanly readable text/words out.
  *
  * @author RakNoel
- * @version 1.0
- * @since 20.03.18
+ * @version 2.0
+ * @since 02.03.19
  */
 public class Markov {
     /**
