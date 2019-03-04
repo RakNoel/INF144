@@ -13,6 +13,7 @@ import java.io.FileReader;
 import java.net.URL;
 import java.util.stream.Collectors;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 /**
@@ -25,7 +26,7 @@ import static org.junit.Assert.assertTrue;
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class MarkovTest {
     private static URL url_short = MarkovTest.class.getResource("Folktale.txt");
-    private static URL url_long = MarkovTest.class.getResource("Folktale.txt");
+    private static URL url_long = MarkovTest.class.getResource("mobydick.txt");
     private static String short_story = null;   //Askeladden
     private static String long_story = null;    //Moby dick
 
@@ -58,10 +59,10 @@ public class MarkovTest {
                 sumEdge++;
         }
 
-        assertTrue("Avg degree != 1", sumEdge / sumNodes == 1.0);
+        assertEquals("Avg degree != 1", 1.0, sumEdge / sumNodes, 0.0);
 
         for (char ch : testcase.toCharArray())
-            assertTrue("Weight to self != 3", m1.getNode("" + ch).getWeight(m1.getNode("" + ch)) == 3);
+            assertEquals("Weight to self != 3", 3, m1.getNode("" + ch).getWeight(m1.getNode("" + ch)));
 
     }
 
@@ -94,7 +95,7 @@ public class MarkovTest {
         for (int i = 1; i < uptoorder; i++) {
             MarkovModel<String> m1 = Markov.getOrder(text, i);
             for (String n : m1)
-                assertTrue("Order " + i + " not correct", n.length() == i);
+                assertEquals("Order " + i + " not correct", n.length(), i);
         }
     }
 }
