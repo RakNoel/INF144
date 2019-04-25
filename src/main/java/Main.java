@@ -19,14 +19,14 @@ import static compression.getBitSize.*;
  * @version 1.0
  * @since 27.03.18
  */
-public class CompressionMain {
+public class Main {
 
     public static void main(String[] args) throws Exception {
 
-        URL url_short = CompressionMain.class.getResource("Folktale.txt");
-        URL url_long = CompressionMain.class.getResource("mobydick.txt");
+        URL url_short = Main.class.getResource("Folktale.txt");
+        URL url_long = Main.class.getResource("mobydick.txt");
 
-        final int generations = 4;
+        final int generations = 5;
         final int iterations = 300; //samples to be run
 
         /*
@@ -47,10 +47,10 @@ public class CompressionMain {
         /*
          * Generate short stories (length 30), swap boolean to stop random ending last words.
          */
-        for (int i = 0; i <= generations; i++)
-            System.out.printf("%d degree :: %s %n", i, Markov.generateRandomStoryFromText(text, i, 50, false));
-
-        System.out.println("");
+        for (int i = 0; i <= generations; i++) {
+            int finalI = i;
+            new Thread(() -> System.out.printf("%d degree :: %s %n", finalI, Markov.generateRandomStoryFromText(text, finalI, 100, false))).start();
+        }
 
 
         /*
@@ -80,6 +80,7 @@ public class CompressionMain {
         System.out.println("");
 
 
+        //Print results
         double sum = 0.0;
         for (String s : texter) {
             double comp = getCompressedBitSize(LZW.compressText(s));

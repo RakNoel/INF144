@@ -10,10 +10,9 @@ import java.util.Iterator;
  * weight and name.
  *
  * @param <T>
- *
  * @author RakNoel
  * @version 2.0
- * @since 02.03.19
+ * @since 01.03.19
  */
 public class State<T> implements Iterable<State<T>> {
     private HashMap<State, Integer> link_weight;

@@ -3,41 +3,15 @@ package markov;
 /**
  * Class with functions made to represent the markov.Markov model.
  * <p>
- * CompressionMain point of this class is to generate random strings
+ * Main point of this class is to generate random strings
  * from a textfile with ordered approximations. Hopefully
  * getting humanly readable text/words out.
  *
  * @author RakNoel
  * @version 2.0
- * @since 02.03.19
+ * @since 01.03.19
  */
 public class Markov {
-    /**
-     * Method to generate strings from the given text using the markov model,
-     * and possibly at another degree if given a non-empty table
-     *
-     * @param text   Text to make model from
-     * @param preGen nullable
-     * @return returns a new String[] filled with generated strings
-     */
-    public static String[] generateFromText(String text, String[] preGen) {
-        if (preGen == null) {
-            preGen = new String[30];
-            MarkovModel<String> d0 = getOrder(text, 0);
-            for (int i = 0; i < preGen.length; i++)
-                preGen[i] = d0.getRandomFreqNode() + "";
-
-            return preGen;
-        } else {
-            int order = preGen[0].length();
-            MarkovModel<String> d0 = getOrder(text, order);
-
-            for (int i = 0; i < preGen.length; i++)
-                preGen[i] += d0.getNextNode(preGen[i]);
-
-            return preGen;
-        }
-    }
 
     /**
      * Method to generate text of a given length with a markov-chain of given order from
