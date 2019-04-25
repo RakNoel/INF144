@@ -1,5 +1,18 @@
-*.iml
+#IntelliJ
 .idea/
+*.iml
+
+#Java
+*.class
+*.jar
+
+#Maven
+target/
 out/
-res/
+
+#Files that are way to large and/or copyrighted
+**/Folktale.txt
+**/mobydick.txt
+
+#Archive
 *.7z

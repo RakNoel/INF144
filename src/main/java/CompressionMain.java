@@ -5,22 +5,26 @@ import markov.Markov;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.stream.Collectors;
 
 import static compression.getBitSize.*;
 
 /**
- * Main class to be run, generating all results
+ * CompressionMain class to be run, generating all results
  * for the assignment.
  *
  * @author RakNoel
  * @version 1.0
  * @since 27.03.18
  */
-public class Main {
+public class CompressionMain {
 
     public static void main(String[] args) throws Exception {
+
+        URL url_short = CompressionMain.class.getResource("Folktale.txt");
+        URL url_long = CompressionMain.class.getResource("mobydick.txt");
 
         final int generations = 4;
         final int iterations = 300; //samples to be run
@@ -28,7 +32,7 @@ public class Main {
         /*
          * First we generate the 30 strings from the markov chain. And inspect them
          */
-        String text = new BufferedReader(new FileReader(new File("res/askeladden.txt"))).lines()
+        String text = new BufferedReader(new FileReader(new File(url_short.getPath()))).lines()
                 .map(x -> x.toLowerCase()
                         .replace(".", "")
                         .replace(",", "")

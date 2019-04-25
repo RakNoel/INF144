@@ -1,5 +1,7 @@
-package compression;
-
+import compression.Huffman;
+import compression.LZW;
+import compression.LZWDictionary;
+import compression.Node;
 import org.junit.BeforeClass;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
@@ -9,6 +11,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.net.URL;
 import java.util.PriorityQueue;
 import java.util.stream.Collectors;
 
@@ -27,16 +30,17 @@ import static org.junit.Assert.assertEquals;
  */
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class CompressionTest {
-
+    private static URL url_short = CompressionTest.class.getResource("Folktale.txt");
+    private static URL url_long = CompressionTest.class.getResource("mobydick.txt");
     private static String short_story = null;   //Askeladden
     private static String long_story = null;    //Moby dick
 
     @BeforeClass
     public static void onlyonce() throws FileNotFoundException {
-        short_story = new BufferedReader(new FileReader(new File("res/askeladden.txt"))).lines()
+        short_story = new BufferedReader(new FileReader(new File(url_short.getPath()))).lines()
                 .filter(x -> (x.length() > 1))
                 .collect(Collectors.joining(" "));
-        long_story = new BufferedReader(new FileReader(new File("res/mobydick.txt"))).lines()
+        long_story = new BufferedReader(new FileReader(new File(url_long.getPath()))).lines()
                 .filter(x -> (x.length() > 0))
                 .collect(Collectors.joining(" "));
     }

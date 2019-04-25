@@ -15,7 +15,7 @@ import java.util.PriorityQueue;
  */
 public class Huffman {
 
-    static PriorityQueue<Node<String>> getFrequencyQueue(String text, StringBuilder queueSaver) {
+    public static PriorityQueue<Node<String>> getFrequencyQueue(String text, StringBuilder queueSaver) {
         MarkovModel<String> d0 = Markov.getOrder(text, 0); //Zeroth markov = freq analysis
         PriorityQueue<Node<String>> treeQueue = new PriorityQueue<>();
         d0.iterator().forEachRemaining(s -> {
@@ -30,7 +30,7 @@ public class Huffman {
         return treeQueue;
     }
 
-    static PriorityQueue<Node<String>> extractFrequencyQueue(String text) {
+    public static PriorityQueue<Node<String>> extractFrequencyQueue(String text) {
         PriorityQueue<Node<String>> treeQueue = new PriorityQueue<>();
         String[] nodes = text.split("" + '\u0000');
 
@@ -103,7 +103,7 @@ public class Huffman {
         return new String[]{bitstream.substring(steps), result};
     }
 
-    static String deCompressText(String encoded) {
+    public static String deCompressText(String encoded) {
         StringBuilder outputString = new StringBuilder();
         int devider = encoded.indexOf('\u001C');
         String frequencyTable = encoded.substring(0, devider);

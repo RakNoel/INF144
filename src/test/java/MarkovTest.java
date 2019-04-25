@@ -1,5 +1,6 @@
-package markov;
-
+import markov.Markov;
+import markov.MarkovModel;
+import markov.State;
 import org.junit.BeforeClass;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
@@ -9,27 +10,31 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.net.URL;
 import java.util.stream.Collectors;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 /**
- * TODO: Describe test
+ * Test class for the markov-chain generator
  *
  * @author RakNoel
- * @version 1.0
- * @since 23.03.18
+ * @version 2.0
+ * @since 02.03.19
  */
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class MarkovTest {
+    private static URL url_short = MarkovTest.class.getResource("Folktale.txt");
+    private static URL url_long = MarkovTest.class.getResource("mobydick.txt");
     private static String short_story = null;   //Askeladden
     private static String long_story = null;    //Moby dick
 
     @BeforeClass
     public static void onlyonce() throws FileNotFoundException {
-        short_story = new BufferedReader(new FileReader(new File("res/askeladden.txt"))).lines()
+        short_story = new BufferedReader(new FileReader(new File(url_short.getPath()))).lines()
                 .collect(Collectors.joining(" "));
-        long_story = new BufferedReader(new FileReader(new File("res/mobydick.txt"))).lines()
+        long_story = new BufferedReader(new FileReader(new File(url_long.getPath()))).lines()
                 .collect(Collectors.joining(" "));
     }
 
@@ -54,10 +59,10 @@ public class MarkovTest {
                 sumEdge++;
         }
 
-        assertTrue("Avg degree != 1", sumEdge / sumNodes == 1.0);
+        assertEquals("Avg degree != 1", 1.0, sumEdge / sumNodes, 0.0);
 
         for (char ch : testcase.toCharArray())
-            assertTrue("Weight to self != 3", m1.getNode("" + ch).getWeight(m1.getNode("" + ch)) == 3);
+            assertEquals("Weight to self != 3", 3, m1.getNode("" + ch).getWeight(m1.getNode("" + ch)));
 
     }
 
@@ -77,6 +82,7 @@ public class MarkovTest {
         TestOrders(long_story, 3);
     }
 
+
     /**
      * Method to test the orders generated from a given text up to
      * a given order
@@ -89,7 +95,7 @@ public class MarkovTest {
         for (int i = 1; i < uptoorder; i++) {
             MarkovModel<String> m1 = Markov.getOrder(text, i);
             for (String n : m1)
-                assertTrue("Order " + i + " not correct", n.length() == i);
+                assertEquals("Order " + i + " not correct", n.length(), i);
         }
     }
 }
