@@ -8,7 +8,11 @@
 
 #Maven
 target/
+out/
 
 #Files that are way to large and/or copyrighted
 **/Folktale.txt
 **/mobydick.txt
+
+#Archive
+*.7z
