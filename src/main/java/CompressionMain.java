@@ -19,12 +19,12 @@ import static compression.getBitSize.*;
  * @version 1.0
  * @since 27.03.18
  */
-public class Main {
+public class CompressionMain {
 
     public static void main(String[] args) throws Exception {
 
-        URL url_short = Main.class.getResource("Folktale.txt");
-        URL url_long = Main.class.getResource("mobydick.txt");
+        URL url_short = CompressionMain.class.getResource("Folktale.txt");
+        URL url_long = CompressionMain.class.getResource("mobydick.txt");
 
         final int generations = 5;
         final int iterations = 300; //samples to be run
